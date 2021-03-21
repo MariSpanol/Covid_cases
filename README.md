@@ -1,28 +1,15 @@
-# Covid_cases
+## Oi eu sou a Mari Spanol e esse aqui é o README do projetin de COVID! *(ah, sério?!)*
 
-Alguns exemplos interessantes e úteis sobre como seu projeto pode ser utilizado. Adicione blocos de códigos e, se necessário, screenshots.
+Como eu sou uma senhora que veio da área da saúde, trabalhar com dados relacionados à ela é algo que eu realmente gosto e devido a isso (em paralelo a necessidade de aprender DE UMA VEZ POR TODAS scrapping) eu to aqui!
 
-_Para mais exemplos, consulte a [Wiki][wiki]._ 
+Dessa forma, o que você vai encontrar aqui:
+- Scrapping de dados públicos das mais diversas fonte de dados
+- Inferências entre casos de COVID e informações sociodemográficas e econômicas
+- Modelagem e previsões com dados de COVID-19 e o que mais for dando na telha nesse caminho...
 
-## Configuração para Desenvolvimento
+## PRA PRÁTICA:
+1. O pontapé incial daqui é eu estar compartilhando esse "mini" projetin pegando os dados de casos de COVID-19 por região, com a intenção de depois evoluir trazendo outras informações para cruzar e enfim fazer umas coisinhas mais alto nível **(KERO)**
 
-Descreva como instalar todas as dependências para desenvolvimento e como rodar um test-suite automatizado de algum tipo. Se necessário, faça isso para múltiplas plataformas.
-@@ -59,8 +61,17 @@ Distribuído sob a licença XYZ. Veja `LICENSE` para mais informações.
+Os dados são do site do Ministério da Saúde que vocês encontram no link: https://susanalitico.saude.gov.br/extensions/covid-19_html/covid-19_html.html 
+O script dessa diversão do fds que eu considero um mini projetin está em: [https://github.com/MariSpanol/Covid_cases/blob/main/scrapping_cases.ipynb]
 
-
-[https://github.com/yourname/github-link](https://github.com/othonalberto/)
-
-## Contributing
-
-1. Faça o _fork_ do projeto (<https://github.com/yourname/yourproject/fork>)
-2. Crie uma _branch_ para sua modificação (`git checkout -b feature/fooBar`)
-3. Faça o _commit_ (`git commit -am 'Add some fooBar'`)
-4. _Push_ (`git push origin feature/fooBar`)
-5. Crie um novo _Pull Request_
-
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
-[wiki]: https://github.com/seunome/seuprojeto/wiki
