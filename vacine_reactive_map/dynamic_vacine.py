@@ -39,6 +39,17 @@ df.columns = [ 'UF', 'Estado',  'primeira_dose', 'segunda_dose']
 df['total_dose'] = df['primeira_dose'] + df['segunda_dose']
 df = df[['UF',	'Estado', 'total_dose',	'primeira_dose',	'segunda_dose']]
 
+populacao = pd.read_csv('populacao_UF.csv')
+populacao.Estado = populacao.Estado.str.strip()
+df = df.merge(populacao,
+how = 'inner',
+on = 'Estado' )
+df['pct_populacao_vacinado_all'] = df['total_dose']/df['Populacao'] *100
+df['pct_populacao_vacinado_pdose'] = df['primeira_dose']/df['Populacao'] *100
+df['pct_populacao_vacinado_sdose'] = df['segunda_dose']/df['Populacao'] *100
+
+df = df[['UF', 'Estado', 'total_dose',	'primeira_dose',	'segunda_dose',
+         'pct_populacao_vacinado_all',	'pct_populacao_vacinado_pdose',	'pct_populacao_vacinado_sdose']]
 
 with urlopen("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson") as response:
  Brazil = json.load(response) # Javascrip object notation
@@ -49,9 +60,10 @@ sources=[{"type": "FeatureCollection", 'features': [feat]} for feat in Brazil['f
 df = df.set_index('Estado') #ESTADO
 df = df.reindex(tx_ids)
 
-rate_list = ['num_all_dose', 'num_prim_dose', 'num_seg_dose'] #vacina
-mins_list = ['zmin1','zmin2', 'zmin3']
-maxs_list = ['zmax1','zmax2', 'zmin3']
+rate_list = ['num_all_dose', 'num_prim_dose', 'num_seg_dose', 'pct_pop_all', 'pct_pdose', 'pct_sdose'] #vacina
+mins_list = ['zmin1','zmin2', 'zmin3', 'zmin4', 'zmin5', 'zmin6']
+maxs_list = ['zmax1','zmax2', 'zmin3', 'zmax4', 'zmax5', 'zmax6']
+
 
 dct = {}
 for i in rate_list:
@@ -65,7 +77,8 @@ dct_max = {}
 for i in maxs_list:
     dct_max['%s' % i] = None
 
-parties = ['total_dose', 'primeira_dose', 'segunda_dose']
+parties = ['total_dose', 'primeira_dose', 'segunda_dose','pct_populacao_vacinado_all',
+           'pct_populacao_vacinado_pdose',	'pct_populacao_vacinado_sdose']
 for n in range(0,len(rate_list)):
     dct[rate_list[n]] = [df.loc[Estado, parties[n]] for Estado in tx_ids]
     dct_min[mins_list[n]] = min(dct[rate_list[n]])
@@ -96,27 +109,52 @@ def get_color_for_val(val, vmin, vmax, pl_colorscale):
 
 alldose =  [[0.0, 'rgb(255, 255, 204)'],
                 [0.35, 'rgb(161, 218, 180)'],
-                [0.5, 'rgb(65, 182, 196)'], 
+                [0.5, 'rgb(65, 182, 196)'],
                 [0.6, 'rgb(44, 127, 184)'],
                 [0.7, 'rgb(8, 104, 172)'],
-                [1.0, 'rgb(37, 52, 148)']] 
+                [1.0, 'rgb(37, 52, 148)']]
 
-pdose= [[0.0, 'rgb(255, 153, 204)'],
-            [0.35, 'rgb(255, 102, 178)'],
-            [0.5, 'rgb(255, 51, 153)'],
-            [0.6, 'rgb(255, 0, 128)'],
-            [0.7, 'rgb(204, 0, 102)'],
-            [1.0, 'rgb(153, 0, 76)']]
+pdose= [[0.0, 'rgb(255, 255, 204)'],
+                [0.35, 'rgb(161, 218, 180)'],
+                [0.5, 'rgb(65, 182, 196)'],
+                [0.6, 'rgb(44, 127, 184)'],
+                [0.7, 'rgb(8, 104, 172)'],
+                [1.0, 'rgb(37, 52, 148)']]
 
-sdose= [[0.0, 'rgb(255, 255, 204)'],
-        [0.35, 'rgb(255, 255, 153)'],
-        [0.5, 'rgb(255, 255, 102)'],
-        [0.6, 'rgb(255, 255, 51)'],
-        [0.7, 'rgb(255, 255, 0)'],
-        [1.0, 'rgb(204, 204, 0)']]
+sdose=[[0.0, 'rgb(255, 255, 204)'],
+                [0.35, 'rgb(161, 218, 180)'],
+                [0.5, 'rgb(65, 182, 196)'],
+                [0.6, 'rgb(44, 127, 184)'],
+                [0.7, 'rgb(8, 104, 172)'],
+                [1.0, 'rgb(37, 52, 148)']]
 
-facecolor_list = ['facecoloralldose','facecolorpdose', 'facecolorsdose']
-scale_list = [alldose, pdose,sdose]
+pctdose=[[0.0, 'rgb(255, 255, 204)'],
+                [0.35, 'rgb(161, 218, 180)'],
+                [0.5, 'rgb(65, 182, 196)'],
+                [0.6, 'rgb(44, 127, 184)'],
+                [0.7, 'rgb(8, 104, 172)'],
+                [1.0, 'rgb(37, 52, 148)']]
+
+pctpdose= [[0.0, 'rgb(255, 255, 204)'],
+                [0.35, 'rgb(161, 218, 180)'],
+                [0.5, 'rgb(65, 182, 196)'],
+                [0.6, 'rgb(44, 127, 184)'],
+                [0.7, 'rgb(8, 104, 172)'],
+                [1.0, 'rgb(37, 52, 148)']]
+
+pctsdose= [[0.0, 'rgb(255, 255, 204)'],
+                [0.35, 'rgb(161, 218, 180)'],
+                [0.5, 'rgb(65, 182, 196)'],
+                [0.6, 'rgb(44, 127, 184)'],
+                [0.7, 'rgb(8, 104, 172)'],
+                [1.0, 'rgb(37, 52, 148)']]
+
+
+
+facecolor_list = ['facecoloralldose','facecolorpdose', 'facecolorsdose', 'facecolorpctdose',
+                  'facecolorpctpdose', 'facecolorpctsdose']
+scale_list = [alldose, pdose,sdose, pctdose, pctpdose, pctsdose]
+
 
 dct_facecolor = {}
 for i in facecolor_list:
@@ -134,8 +172,13 @@ text_p=[c+'<br>Estado de '+ w + ' com o total de ' + '{:0.0f}'.format(r)+' vacin
 
 text_s=[c+'<br>Estado de '+ w + ' com o total de ' + '{:0.0f}'.format(r)+' vacinados na segunda dose por COVID-19' for c, r, w in zip(df.UF, dct[rate_list[2]], counties)]
 
-text_list = [text_all, text_p, text_s]
+text_pct = [c+'<br>Estado de '+ w + ' com o total de "' + '{:0.2f}'.format(r)+'%" da população vacinados por COVID-19' for c, r, w in zip(df.UF, dct[rate_list[3]], counties)]
 
+text_pctp=[c+'<br>Estado de '+ w + ' com o total de "' + '{:0.2f}'.format(r)+'%"" da população vacinados na primeira dose por COVID-19' for c, r, w in zip(df.UF, dct[rate_list[4]], counties)]
+
+text_pcts=[c+'<br>Estado de '+ w + ' com o total de "' + '{:0.2f}'.format(r)+'%" da população vacinados na segunda dose por COVID-19' for c, r, w in zip(df.UF, dct[rate_list[5]], counties)]
+
+text_list = [text_all, text_p,text_s, text_pct, text_pctp, text_pcts]
 
 data = []
 
@@ -159,7 +202,7 @@ data = [dict(type='scattermapbox',
              mode='markers',
              marker=dict(size=1, color='white'),
              showlegend=False,
-             text=text_p,
+             text=text_list[0],
              hoverinfo='text'
             )]
 
@@ -175,7 +218,7 @@ for a in range(1,len(text_list)):
                 ))
 
 
-layers_list = ['layers1','layers2', 'layers3']
+layers_list = ['layers1','layers2', 'layers3', 'layers4','layers5', 'layers6']
 
 dct_layers = {}
 for i in layers_list:
@@ -187,22 +230,26 @@ for l in range(0,len(layers_list)):
              #below="water",
              type = 'fill',
              color = dct_facecolor[facecolor_list[l]][k],
-             opacity=0.5
+             opacity=1.0
             ) for k in range(len(sources))]
 
 
-lay_list = [dct_layers[layers_list[0]],dct_layers[layers_list[1]], dct_layers[layers_list[2]]]
+lay_list = [dct_layers[layers_list[0]],dct_layers[layers_list[1]],
+            dct_layers[layers_list[2]], dct_layers[layers_list[3]], dct_layers[layers_list[4]], dct_layers[layers_list[5]]]
 
 updatemenus = list([dict(buttons=list()),
                     dict(direction='down',
                          showactive=True)])
 
-party_list = ['TOTAL','PRIMEIRA DOSE','SEGUNDA DOSE']
-vis_list = [[True,False, False],[False,True, False], [False, False, True]]
+party_list = ['TOTAL','PRIMEIRA DOSE','SEGUNDA DOSE', '% POPULAÇÃO (TOTAL)','% POPULAÇÃO (PRIMEIRA DOSE)','% POPULAÇÃO (SEGUNDA DOSE)' ]
+vis_list = [[True,False, False, False, False, False],[False,True, False, False, False, False], [False, False, True, False, False, False],
+[False, False, False, True, False, False], [False, False, False, False, True, False], [False, False, False, False, False, True]]
 
 layout = dict(hovermode='closest',
              font=dict(family='Arial Black'),
-              autosize=True,
+              autosize=False,
+              width=1000,
+              height=900,
               mapbox=dict(accesstoken=mapbox_access_token,
                           layers=dct_layers[layers_list[0]],
                           bearing=0,
@@ -227,8 +274,9 @@ fig = dict(data=data, layout=layout)
 st.plotly_chart(fig)
 
 st.sidebar.title("Heatmap de vacinação COVID-19 (BR)")
-st.sidebar.write("Período de aaaa à aaaaa")
-st.sidebar.write("Dados extraídos através do scrapping nos dados do OpenDataSUS que eu ensino aqui: *https://github.com/MariSpanol/Covid_cases/blob/main/scrapping_vacine.ipynb*")
+st.sidebar.write("Período de Dezembro/2020 à Abril/2021")
+st.sidebar.write("Dados extraídos através do scrapping nos dados do OpenDataSUS que eu ensino [aqui](https://github.com/MariSpanol/Covid_cases/blob/main/scrapping_vacine.ipynb)")
+st.sidebar.markdown("###### *As informações de população para calculo de percentual da população vacinada foram extraídos através do scrapping nos dados da Wikipédia deste notebook [aqui](https://github.com/MariSpanol/Covid_cases/blob/main/scrapping_population.ipynb)")
 st.sidebar.markdown('###### *foram considerados apenas dados com primeira e segunda doses não nulos')
 st.sidebar.markdown('')
 st.sidebar.markdown('**Mariana Spanol**')
@@ -238,6 +286,13 @@ st.sidebar.markdown('')
 st.sidebar.markdown('Meus contatos:')
 st.sidebar.markdown('mailto:marianaspanol@usp.br')
 st.sidebar.markdown('https://github.com/MariSpanol')
+
+st.markdown("""
+         <style>
+         body {
+             background: #ff0099}
+             </style>
+             """, unsafe_allow_html=True)
 
 
 
